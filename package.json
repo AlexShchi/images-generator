@@ -1,0 +1,26 @@
+{
+  "name": "images-generator",
+  "version": "1.0.0",
+  "description": "Code for generating different sizes images of jpg, png and webp formats,",
+  "main": "test.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlexShchi/images-generator.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AlexShchi/images-generator/issues"
+  },
+  "homepage": "https://github.com/AlexShchi/images-generator#readme",
+  "dependencies": {
+    "gm": "^1.23.1",
+    "imagemin": "^7.0.1",
+    "imagemin-jpegtran": "^7.0.0",
+    "imagemin-pngquant": "^9.0.1",
+    "sharp": "^0.26.2"
+  }
+}
