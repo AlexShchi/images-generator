@@ -6,6 +6,7 @@ const fs = require('fs'),
 // const imageminPngquant = require('imagemin-pngquant');
 // const gm = require('gm');
 
+const config = require('./config');
 const path = './src/';
 const dest = './output/';
 
@@ -14,6 +15,7 @@ const images = [
     'test-image-2.png'
 ]
 
+// console.log(config);
 
 /*
 src      - папка, в которой лежит файл
@@ -172,7 +174,7 @@ function makeImages(src, dest, format, allInDest) {
 
             makeDir( destDir );
             const fileName = files[i].replace(/^.*\//,'');
-            createImagesForImage( files[i].replace(/[^\/]*\.(jpg|jpeg|png|svg|gif)/, '' ), destDir, fileName );
+            createImagesForImage( files[i].replace(/[^\/]*\.(jpg|jpeg|png|svg|gif)/, '' ), destDir, fileName,[],format );
         }
 
     } else {
@@ -181,11 +183,6 @@ function makeImages(src, dest, format, allInDest) {
 }
 
 // makeImages(path, dest, 'webp', false);
-
-const config = require('config')();
-// import config from 'config';
-
-console.log(config);
 
 
 

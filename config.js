@@ -1,4 +1,4 @@
-module.exports = {
+const config = {
     src: './src',
     dest: './output',
     size: '',
@@ -28,3 +28,4 @@ module.exports = {
     }
 
 }
+module.exports = config;
