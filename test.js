@@ -48,49 +48,67 @@ function createImagesForImage(src, dest, fileName, size, format) {
 
             let stream = sharp(src + fileName);
 
-            if( size ) {
-                stream.resize(size[0], size[1]);
+            stream.flatten({ background: { r: 255, g: 255, b: 255 } });
+            // stream.flatten(true);
+
+            if (size) {
+                stream.resize(size[0], size[1],{
+                    fit: 'contain',
+                    background: { r: 255, g: 255, b: 255 }
+                });
             }
 
-            // formats api: https://sharp.pixelplumbing.com/api-output
-            switch (format) {
-                case 'webp':
-                    stream.webp({
-                        lossless: false,
-                        quality: 80,
-                        reductionEffort: 6, //0-6
-                    });
-                    break;
-                case 'jpeg':
-                case 'jpg':
-                    format = 'jpg';
-                    stream.jpeg({
-                        quality: 80,
-                        progressive: true,
-                    });
-                    break;
-                case 'png':
-                    stream.png({
-                        progressive: false,
-                        compressionLevel: 9, //0-9
-                        quality: 80
-                    });
-                    break;
-            }
-
-            stream.toFile(`${dest + name}.${format}`, (err, info) => {
-                if (err) {
-                    console.log(`Error on ${dest + fileName}`)
-                    console.log(err);
-                } else {
-                    if( size ) {
-                        console.log(`\x1b[1m\x1b[32mFile "${src + fileName}" => ${size} | "${dest + name}.${format}"\x1b[0m`);
-                    } else {
-                        console.log(`\x1b[1m\x1b[32mFile "${src + fileName}" => "${dest + name}.${format}"\x1b[0m`);
-                    }
-
+            if (format.constructor === Array) {
+                for (let type in format) {
+                    handle(format[type]);
                 }
-            });
+            } else {
+                handle(format);
+            }
+
+            function handle(format) {
+                // formats api: https://sharp.pixelplumbing.com/api-output
+                switch (format) {
+                    case 'webp':
+                        stream.webp({
+                            lossless: false,
+                            quality: 80,
+                            reductionEffort: 6, //0-6
+                        });
+                        break;
+                    case 'jpeg':
+                    case 'jpg':
+                        format = 'jpg';
+                        stream.jpeg({
+                                quality: 80,
+                                progressive: true,
+                            });
+                        break;
+                    case 'png':
+                        stream.png({
+                            progressive: false,
+                            compressionLevel: 9, //0-9
+                            quality: 80
+                        });
+                        break;
+                }
+
+                stream.toFile(`${dest + name}.${format}`, (err, info) => {
+                    if (err) {
+                        console.log(`Error on ${dest + fileName}`)
+                        console.log(err);
+                    } else {
+                        if (size) {
+                            console.log(`\x1b[1m\x1b[32mFile "${src + fileName}" => ${size} | "${dest + name}.${format}"\x1b[0m`);
+                        } else {
+                            console.log(`\x1b[1m\x1b[32mFile "${src + fileName}" => "${dest + name}.${format}"\x1b[0m`);
+                        }
+
+                    }
+                });
+            }
+
+
         }
     })
 }
@@ -154,27 +172,27 @@ function makeDir(dir) {
 /*
 srd - папка с файлами изобржаений
 */
-function makeImages(src, dest, format, allInDest) {
+function makeImages(src, dest, size, format, allInDest) {
     const files = getFiles(src);
     if (files) {
 
-        if( !dest.match(/\/$/) ){
+        if (!dest.match(/\/$/)) {
             dest += '/'
         }
 
-        for( const i in files ) {
+        for (const i in files) {
 
             let destDir = files[i].replace(/^.\/src\//, dest);
-            if( !allInDest ){
+            if (!allInDest) {
                 destDir = files[i].replace(/^.\/src\//, dest);
-                destDir = destDir.replace(/[^\/]*\.(jpg|jpeg|png|svg|gif)/, '' );
+                destDir = destDir.replace(/[^\/]*\.(jpg|jpeg|png|svg|gif)/, '');
             } else {
                 destDir = dest;
             }
 
-            makeDir( destDir );
-            const fileName = files[i].replace(/^.*\//,'');
-            createImagesForImage( files[i].replace(/[^\/]*\.(jpg|jpeg|png|svg|gif)/, '' ), destDir, fileName,[],format );
+            makeDir(destDir);
+            const fileName = files[i].replace(/^.*\//, '');
+            createImagesForImage(files[i].replace(/[^\/]*\.(jpg|jpeg|png|svg|gif)/, ''), destDir, fileName, size, format);
         }
 
     } else {
@@ -182,7 +200,7 @@ function makeImages(src, dest, format, allInDest) {
     }
 }
 
-// makeImages(path, dest, 'webp', false);
+makeImages(path, dest, [150,100],['jpg', 'webp'], false);
 
 
 
