@@ -48,13 +48,13 @@ function createImagesForImage(src, dest, fileName, size, format) {
 
             let stream = sharp(src + fileName);
 
-            stream.flatten({ background: { r: 255, g: 255, b: 255 } });
+            // stream.flatten({ background: { r: 255, g: 255, b: 255 } });
             // stream.flatten(true);
 
             if (size) {
                 stream.resize(size[0], size[1],{
-                    fit: 'contain',
-                    background: { r: 255, g: 255, b: 255 }
+                    fit: 'cover',
+                    // background: { r: 255, g: 255, b: 255 }
                 });
             }
 
@@ -127,12 +127,16 @@ function getFiles(srcPath) {
     for (let index in folderItems) {
 
         if (fs.statSync(`${srcPath}${folderItems[index]}`).isFile()) {
-            files.push(`${srcPath}${folderItems[index]}`);
+            let file = `${srcPath}${folderItems[index]}`;
+            if( file.match(/\.(jpg|jpeg|png|svg|gif|webp)$/i) ) {
+                files.push(file.toLowerCase());
+            }
+
         } else {
             let folderFiles = getFiles(`${srcPath}${folderItems[index]}/`);
             if (folderFiles.length) {
                 for (let i in folderFiles) {
-                    if (folderFiles[i].match(/(jpg|jpeg|png|svg|gif|webp)/g))
+                    if (folderFiles[i].match(/\.(jpg|jpeg|png|svg|gif|webp)$/g))
                         files.push(folderFiles[i]);
                 }
             }
@@ -142,6 +146,7 @@ function getFiles(srcPath) {
     if (!files.length) {
         return false;
     }
+
     return files;
 }
 
@@ -170,7 +175,7 @@ function makeDir(dir) {
 // makeDir(true);
 
 /*
-srd - папка с файлами изобржаений
+srs - папка с файлами изобржаений
 */
 function makeImages(src, dest, size, format, allInDest) {
     const files = getFiles(src);
@@ -185,14 +190,14 @@ function makeImages(src, dest, size, format, allInDest) {
             let destDir = files[i].replace(/^.\/src\//, dest);
             if (!allInDest) {
                 destDir = files[i].replace(/^.\/src\//, dest);
-                destDir = destDir.replace(/[^\/]*\.(jpg|jpeg|png|svg|gif)/, '');
+                destDir = destDir.replace(/[^\/]*\.(jpg|jpeg|png|svg|gif)$/i, '');
             } else {
                 destDir = dest;
             }
 
             makeDir(destDir);
             const fileName = files[i].replace(/^.*\//, '');
-            createImagesForImage(files[i].replace(/[^\/]*\.(jpg|jpeg|png|svg|gif)/, ''), destDir, fileName, size, format);
+            createImagesForImage(files[i].replace(/[^\/]*\.(jpg|jpeg|png|svg|gif)$/i, ''), destDir, fileName, size, format);
         }
 
     } else {
@@ -200,7 +205,7 @@ function makeImages(src, dest, size, format, allInDest) {
     }
 }
 
-makeImages(path, dest, [150,100],['jpg', 'webp'], false);
+makeImages(path, dest, [1160,490],['jpg','webp'], false);
 
 
 
